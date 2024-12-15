@@ -1,0 +1,10 @@
+https://neon.tech/
+karec52633@rustetic.com
+karec52633@rustetic.comQ+
+
+postgresql://salo_owner:ptrUGjQf0A7g@ep-polished-math-a2m7h80u.eu-central-1.aws.neon.tech/salo?sslmode=require
+
+host: ep-polished-math-a2m7h80u.eu-central-1.aws.neon.tech
+user_name: salo_owner
+password: ptrUGjQf0A7g
+database: salo
