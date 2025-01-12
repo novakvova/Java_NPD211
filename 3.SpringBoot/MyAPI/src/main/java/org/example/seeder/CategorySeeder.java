@@ -1,7 +1,7 @@
 package org.example.seeder;
 
 import org.example.entites.CategoryEntity;
-import org.example.repository.CategoryRepository;
+import org.example.repository.ICategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class CategorySeeder {
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private ICategoryRepository categoryRepository;
 
     public void seed() {
         if(categoryRepository.count() == 0) {
