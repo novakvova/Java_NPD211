@@ -9,7 +9,15 @@ export const categoriesApi = createApi({
         getAllCategories: builder.query<Category[], void>({
             query: () => 'categories',
         }),
+
+        createCategory: builder.mutation<Category, FormData>({
+            query: (formData) => ({
+                url: 'categories',
+                method: 'POST',
+                body: formData,
+            }),
+        }),
     }),
 });
 
-export const { useGetAllCategoriesQuery } = categoriesApi;
+export const { useGetAllCategoriesQuery, useCreateCategoryMutation } = categoriesApi;
