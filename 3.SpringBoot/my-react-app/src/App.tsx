@@ -10,8 +10,11 @@ const App: React.FC = () => (
         <Routes>
             <Route path="/" element={<Layout />}>
                 <Route index element={<HomePage />} />
-                <Route path="categories" element={<CategoriesPage />} />
-                <Route path="categories/create" element={<CreateCategoryPage />} />
+                <Route path="categories" >
+                    <Route index element={<CategoriesPage />} />
+                    <Route path="create" element={<CreateCategoryPage />} />
+                </Route>
+
             </Route>
         </Routes>
     </Router>

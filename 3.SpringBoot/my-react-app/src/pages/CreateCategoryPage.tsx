@@ -11,23 +11,17 @@ const CreateCategoryPage: React.FC = () => {
     });
 
     const [createCategory, { isLoading, error }] = useCreateCategoryMutation();
+
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Створення об'єкта FormData
-        const formData = new FormData();
-        formData.append('name', category.name);
-        formData.append('description', category.description);
-        if (category.imageFile) {
-            formData.append('imageFile', category.imageFile);
-        }
 
         try {
             // Викликаємо мутацію для створення категорії
-            await createCategory(formData).unwrap();
-            navigate(`..`); // Перехід до нової категорії
+            await createCategory(category).unwrap();
+            navigate('..'); // Перехід до нової категорії
         } catch (err) {
             console.error('Error creating category:', err);
         }
