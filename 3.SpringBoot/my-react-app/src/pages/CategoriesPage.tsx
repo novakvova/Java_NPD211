@@ -12,7 +12,7 @@ const CategoriesPage: React.FC = () => {
 
     return (
         <>
-            <h1 className="text-4xl text-center font-bold text-blue-700 shadow-lg p-6 bg-opacity-50 rounded-lg">
+            <h1 className="text-4xl text-center font-bold text-blue-700 p-6 ">
                 Категорії
             </h1>
             {/* Кнопка для переходу на сторінку створення категорії */}
