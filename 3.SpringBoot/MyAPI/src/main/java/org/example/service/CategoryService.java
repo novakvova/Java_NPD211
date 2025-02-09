@@ -32,4 +32,14 @@ public class CategoryService {
         entity.setImage(imagePath);
         return categoryRepository.save(entity);
     }
+
+    public CategoryEntity getById(Integer id) throws Exception {
+        var categoryOpt = categoryRepository.findById(id);
+        if(categoryOpt.isPresent()) {
+            return categoryOpt.get();
+        }
+        else {
+            throw new Exception("Not found");
+        }
+    }
 }

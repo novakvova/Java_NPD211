@@ -31,4 +31,14 @@ public class CategoryController {
         CategoryEntity createdCategory = categoryService.createCategory(category);
         return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoryEntity> getById(@PathVariable Integer id) {
+        try {
+            var model = categoryService.getById(id);
+            return ResponseEntity.ok().body(model);
+        } catch (Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
