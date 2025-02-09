@@ -23,8 +23,8 @@ docker build -t npd211-java .
 docker images --all
 docker run -it --rm -p 5086:8082 --name npd211_container npd211-java
 docker run -d --restart=always --name npd211_container -p 5086:8082 npd211-java
-docker run -d --restart=always -v d:/volumes/spring/uploading:/app/uploading --name npd211_container -p 5086:8082 npd211-java
-docker run -d --restart=always -v /volumes/spring/uploading:/app/uploading --name npd211_container -p 5086:8082 npd211-java
+docker run -d --restart=always -v d:/volumes/npd211/uploading:/app/images --name npd211_container -p 5086:8082 npd211-java
+docker run -d --restart=always -v /volumes/spring/uploading:/app/images --name npd211_container -p 5086:8082 npd211-java
 docker ps -a
 docker stop npd211_container
 docker rm npd211_container
@@ -39,6 +39,8 @@ docker push novakvova/npd211-java:latest
 docker pull novakvova/npd211-java:latest
 docker ps -a
 docker run -d --restart=always --name npd211_container -p 5086:8082 novakvova/npd211-java
+
+docker run -d --restart=always -v /volumes/npd211/uploading:/app/images --name npd211_container -p 5086:8082 novakvova/npd211-java
 
 
 docker pull novakvova/npd211-java:latest
