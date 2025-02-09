@@ -5,16 +5,15 @@ import org.example.entites.CategoryEntity;
 import org.example.repository.ICategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService {
-    //Автоматично робиться Dependency Injection -
+
     @Autowired
     private ICategoryRepository categoryRepository;
-
     @Autowired
     private FileService fileService;
 
@@ -22,24 +21,46 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
-    public CategoryEntity createCategory(CategoryPostDto dto) {
+    public Optional<CategoryEntity> getCategoryById(Integer id) {
+        return categoryRepository.findById(id);
+    }
+
+    public CategoryEntity createCategory(CategoryPostDto category) {
         var entity = new CategoryEntity();
-        entity.setName(dto.getName());
-        entity.setDescription(dto.getDescription());
+        entity.setName(category.getName());
+        entity.setDescription(category.getDescription());
         entity.setCreationTime(LocalDateTime.now());
 
-        var imagePath = fileService.load(dto.getImageFile());
+        var imagePath = fileService.load(category.getImageFile());
         entity.setImage(imagePath);
         return categoryRepository.save(entity);
     }
 
-    public CategoryEntity getById(Integer id) throws Exception {
-        var categoryOpt = categoryRepository.findById(id);
-        if(categoryOpt.isPresent()) {
-            return categoryOpt.get();
+    public boolean updateCategory(Integer id, CategoryPostDto category) {
+        var res = getCategoryById(id);
+        if (res.isEmpty()){
+            return false;
         }
-        else {
-            throw new Exception("Not found");
+        var entity = res.get();
+        entity.setName(category.getName());
+        entity.setDescription(category.getDescription());
+
+        var newImageFile = category.getImageFile();
+        if (newImageFile!=null && !newImageFile.isEmpty()){
+            var newImagePath = fileService.replace(entity.getImage(), category.getImageFile());
+            entity.setImage(newImagePath);
         }
+        categoryRepository.save(entity);
+        return true;
+    }
+
+    public boolean deleteCategory(Integer id) {
+        var res = getCategoryById(id);
+        if (res.isEmpty()){
+            return false;
+        }
+        fileService.remove(res.get().getImage());
+        categoryRepository.deleteById(id);
+        return true;
     }
 }

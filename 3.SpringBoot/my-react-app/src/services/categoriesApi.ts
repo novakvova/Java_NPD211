@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import {Category, ICategoryCreate} from "../types/Category.ts";
+import {Category, ICategoryCreate, ICategoryEdit} from "../types/Category.ts";
 import {APP_ENV} from "../env";
 import {serialize} from 'object-to-formdata';
 
@@ -11,6 +11,11 @@ export const categoriesApi = createApi({
         getAllCategories: builder.query<Category[], void>({
             query: () => 'categories',
             providesTags: ["Category"], // Позначаємо, що цей запит пов'язаний з "Category"
+        }),
+
+        getCategoryById: builder.query<Category, string>({
+            query: (id) => `categories/${id}`,
+            providesTags: ["Category"]
         }),
 
         createCategory: builder.mutation<Category, ICategoryCreate>({
@@ -28,7 +33,39 @@ export const categoriesApi = createApi({
             },
             invalidatesTags: ["Category"], // Інвалідовуємо "Category" після створення
         }),
+
+        updateCategory: builder.mutation<void, ICategoryEdit>({
+            query: ({ id, ...model }) => {
+                try {
+
+
+                    const formData = serialize(model);
+                    return {
+                        url: `categories/${id}`,
+                        method: 'PUT',
+                        body: formData
+                    };
+                } catch {
+                    throw new Error("Error serializing the form data.");
+                }
+            },
+            invalidatesTags: ["Category"]
+        }),
+
+        deleteCategory: builder.mutation<void, number>({
+            query: (id) => ({
+                url: `categories/${id}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: ["Category"]
+        }),
     }),
 });
 
-export const { useGetAllCategoriesQuery, useCreateCategoryMutation } = categoriesApi;
+export const {
+    useGetAllCategoriesQuery,
+    useGetCategoryByIdQuery,
+    useCreateCategoryMutation,
+    useUpdateCategoryMutation,
+    useDeleteCategoryMutation
+} = categoriesApi;

@@ -11,3 +11,7 @@ export interface ICategoryCreate {
     description: string;
     imageFile: File | null;
 }
+
+export interface ICategoryEdit extends ICategoryCreate {
+    id: number;
+}

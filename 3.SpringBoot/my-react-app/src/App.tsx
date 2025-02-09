@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import CategoriesPage from './pages/CategoriesPage';
 import CreateCategoryPage from "./pages/CreateCategoryPage.tsx";
+import EditCategoryPage from "./pages/EditCategoryPage.tsx";
 
 const App: React.FC = () => (
     <Router>
@@ -13,6 +14,7 @@ const App: React.FC = () => (
                 <Route path="categories" >
                     <Route index element={<CategoriesPage />} />
                     <Route path="create" element={<CreateCategoryPage />} />
+                    <Route path="edit/:id" element={<EditCategoryPage />} />
                 </Route>
 
             </Route>
