@@ -1,5 +1,35 @@
 # React + TypeScript + Vite
 
+docker build -t npd211-react .
+
+docker images --all
+
+docker run -it --rm -p 5072:80 --name npd211_container_react npd211-react
+
+docker run -d --restart=always --name npd211_container_react -p 5072:80 npd211-react
+
+docker ps -a
+
+docker stop npd211_container_react
+
+docker rm npd211_container_react
+
+docker images --all
+docker rmi npd211-react
+
+docker login
+
+docker tag npd211-react:latest novakvova/npd211-react:latest
+
+docker push novakvova/npd211-react:latest
+
+docker pull novakvova/npd211-react:latest
+
+docker ps -a
+
+docker run -d --restart=always --name npd211_container_react -p 5072:80 novakvova/npd211-react
+
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
