@@ -30,9 +30,12 @@ public class CategoryService {
         entity.setName(category.getName());
         entity.setDescription(category.getDescription());
         entity.setCreationTime(LocalDateTime.now());
+        var newImageFile = category.getImageFile();
+        if (newImageFile!=null && !newImageFile.isEmpty()){
+            var imagePath = fileService.load(newImageFile);
+            entity.setImage(imagePath);
+        }
 
-        var imagePath = fileService.load(category.getImageFile());
-        entity.setImage(imagePath);
         return categoryRepository.save(entity);
     }
 

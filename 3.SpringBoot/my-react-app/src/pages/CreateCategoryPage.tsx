@@ -19,6 +19,10 @@ const CreateCategoryPage: React.FC = () => {
 
 
         try {
+            if (!category.imageFile) {
+                // @ts-ignore
+                delete category.imageFile;
+            }
             // Викликаємо мутацію для створення категорії
             await createCategory(category).unwrap();
             navigate('..'); // Перехід до нової категорії
