@@ -1,28 +1,33 @@
 package org.example.service;
 
+import lombok.AllArgsConstructor;
+import org.example.dto.category.CategoryItemDTO;
 import org.example.dto.category.CategoryPostDto;
 import org.example.entities.CategoryEntity;
+import org.example.mapper.CategoryMapper;
 import org.example.repository.ICategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class CategoryService {
 
-    @Autowired
-    private ICategoryRepository categoryRepository;
-    @Autowired
-    private FileService fileService;
 
-    public List<CategoryEntity> getAllCategories() {
-        return categoryRepository.findAll();
+    private ICategoryRepository categoryRepository;
+    private FileService fileService;
+    private CategoryMapper categoryMapper;
+
+    public List<CategoryItemDTO> getAllCategories() {
+        return categoryMapper.toDto(categoryRepository.findAll());
     }
 
-    public Optional<CategoryEntity> getCategoryById(Integer id) {
-        return categoryRepository.findById(id);
+    public CategoryItemDTO getCategoryById(Integer id) {
+        return categoryMapper.toDto(categoryRepository.findById(id).get());
     }
 
     public CategoryEntity createCategory(CategoryPostDto category) {
@@ -40,7 +45,7 @@ public class CategoryService {
     }
 
     public boolean updateCategory(Integer id, CategoryPostDto category) {
-        var res = getCategoryById(id);
+        var res = categoryRepository.findById(id);
         if (res.isEmpty()){
             return false;
         }
@@ -58,7 +63,7 @@ public class CategoryService {
     }
 
     public boolean deleteCategory(Integer id) {
-        var res = getCategoryById(id);
+        var res = categoryRepository.findById(id);
         if (res.isEmpty()){
             return false;
         }

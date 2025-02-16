@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.dto.category.CategoryItemDTO;
 import org.example.dto.category.CategoryPostDto;
 import org.example.entities.CategoryEntity;
 import org.example.service.CategoryService;
@@ -19,14 +20,13 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping
-    public List<CategoryEntity> getAllCategories() {
+    public List<CategoryItemDTO> getAllCategories() {
         return categoryService.getAllCategories();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryEntity> getCategoryById(@PathVariable Integer id) {
-        Optional<CategoryEntity> category = categoryService.getCategoryById(id);
-        return category.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public CategoryItemDTO getCategoryById(@PathVariable Integer id) {
+        return categoryService.getCategoryById(id);
     }
 
     @PostMapping(consumes = MULTIPART_FORM_DATA_VALUE)
