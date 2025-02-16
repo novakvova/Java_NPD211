@@ -1,7 +1,7 @@
 package org.example.controller;
 
 import org.example.dto.category.CategoryPostDto;
-import org.example.entites.CategoryEntity;
+import org.example.entities.CategoryEntity;
 import org.example.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

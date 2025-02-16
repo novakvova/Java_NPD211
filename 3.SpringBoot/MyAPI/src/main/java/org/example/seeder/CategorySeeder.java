@@ -1,6 +1,6 @@
 package org.example.seeder;
 
-import org.example.entites.CategoryEntity;
+import org.example.entities.CategoryEntity;
 import org.example.repository.ICategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
