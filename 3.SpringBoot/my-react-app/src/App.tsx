@@ -6,6 +6,7 @@ import CategoriesPage from './pages/category/CategoriesPage.tsx';
 import CreateCategoryPage from "./pages/category/CreateCategoryPage.tsx";
 import EditCategoryPage from "./pages/category/EditCategoryPage.tsx";
 import ProductsPage from "./pages/product/ProductsPage.tsx";
+import CreateProductPage from "./pages/product/CreateProductPage.tsx";
 
 const App: React.FC = () => (
     <Router>
@@ -19,7 +20,7 @@ const App: React.FC = () => (
                 </Route>
                 <Route path="products" >
                     <Route index element={<ProductsPage />} />
-                    {/*<Route path="create" element={<CreateProductPage />} />*/}
+                    <Route path="create" element={<CreateProductPage />} />
                 </Route>
             </Route>
         </Routes>
