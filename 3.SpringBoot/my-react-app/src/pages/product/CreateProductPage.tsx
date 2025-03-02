@@ -64,7 +64,7 @@ const CreateProductPage: React.FC = () => {
             order: index,
         }));
 
-        setSelectedFiles(newFileList);
+        setSelectedFiles([...selectedFiles, ...newFileList]);
     };
 
 
