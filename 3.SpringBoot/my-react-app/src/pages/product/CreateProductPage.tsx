@@ -24,27 +24,15 @@ const CreateProductPage: React.FC = () => {
         value: item.id,
     }));
 
-
-    // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //     if (event.target.files) {
-    //         const filesArray = Array.from(event.target.files);
-    //         setSelectedFiles(prev => [...prev, ...filesArray]);
-    //     }
-    // };
-    //
-    // const handleRemoveFile = (index: number) => {
-    //     setSelectedFiles(prev => prev.filter((_, i) => i !== index));
-    // };
-
     const onSubmit = async (values: IProductCreate) => {
-        // try {
-        //     values.imageFiles = selectedFiles;
-        //     // Викликаємо мутацію для створення продукту
-        //     await createProduct(values).unwrap();
-        //     navigate('..'); // Перехід до нового продукту
-        // } catch (err) {
-        //     console.error('Error creating product:', err);
-        // }
+        try {
+            values.imageFiles = selectedFiles.map(x=> x.originFileObj as File);
+            // Викликаємо мутацію для створення продукту
+            await createProduct(values).unwrap();
+            navigate('..'); // Перехід до нового продукту
+        } catch (err) {
+            console.error('Error creating product:', err);
+        }
     }
 
     const onDragEnd = (result: DropResult) => {
