@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {useCreateProductMutation, useGetProductByIdQuery} from "../../services/productsApi.ts";
+import {useUpdateProductMutation, useGetProductByIdQuery} from "../../services/productsApi.ts";
 import {useNavigate, useParams} from 'react-router-dom';
-import {IProductCreate} from "../../types/Product.ts";
+import {IProductEdit} from "../../types/Product.ts";
 import {useGetAllCategoriesQuery} from "../../services/categoriesApi.ts";
 import {Form, Input, Select, Upload, UploadFile} from "antd";
 import TextArea from "antd/es/input/TextArea";
@@ -21,24 +21,28 @@ const EditProductPage: React.FC = () => {
     // console.log("product", product);
 
 
-    const [createProduct, {isLoading, error}] = useCreateProductMutation();
+    const [updateProduct, {isLoading, error}] = useUpdateProductMutation();
 
     const [selectedFiles, setSelectedFiles] = useState<UploadFile[]>([]);
 
     const navigate = useNavigate();
 
-    const [form] = Form.useForm<IProductCreate>();
+    const [form] = Form.useForm<IProductEdit>();
 
     const categoriesData = categories?.map(item => ({
         label: item.name,
         value: item.id,
     }));
 
-    const onSubmit = async (values: IProductCreate) => {
+    const onSubmit = async (values: IProductEdit) => {
         try {
+            //console.log("values", values);
+            //console.log("values", selectedFiles);
             values.imageFiles = selectedFiles.map(x=> x.originFileObj as File);
+            values.id = product!.id;
+            //console.log("values", values);
             // Викликаємо мутацію для створення продукту
-            await createProduct(values).unwrap();
+            await updateProduct(values).unwrap();
             navigate('..'); // Перехід до нового продукту
         } catch (err) {
             console.error('Error creating product:', err);
@@ -69,16 +73,17 @@ const EditProductPage: React.FC = () => {
     useEffect(() => {
         if(product) {
             form.setFieldsValue({...product});
-            const newFileList: UploadFile[] =
-                product.images.map(name=> ({
-                    uid: name,
-                    name: name,
-                    status: "done",
-                    url: `${APP_ENV.REMOTE_IMAGES_URL}medium/${name}`
-                }));
-            setSelectedFiles(newFileList);
+            const files = product?.images.map(x => ({
+                uid: x,
+                url: `${APP_ENV.REMOTE_IMAGES_URL}medium/${x}`,
+                originFileObj: new File([new Blob([''])], x, { type: 'old-image' })
+            }) as UploadFile);
+            setSelectedFiles(files);
         }
     }, [product]);
+
+    if (productLoading) return <p>Loading...</p>;
+    if (productError) return <p>Error loading product data.</p>;
 
     return (
         <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded-lg">

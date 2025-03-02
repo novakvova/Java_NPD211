@@ -11,8 +11,13 @@ import org.example.repository.ICategoryRepository;
 import org.example.repository.IProductImageRepository;
 import org.example.repository.IProductRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDateTime;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -86,28 +91,48 @@ public class ProductService {
             entity.setCategory(category);
         }
         productRepository.save(entity);
-        var newImageFiles = product.getImageFiles();
+        //Шукаємо фотки, які треба видалити
 
-        if (!newImageFiles.isEmpty()){
+
             //remove old images
-            var oldProductImageEntities = entity.getImages();
-            for (var productImage : oldProductImageEntities) {
-                fileService.remove(productImage.getName());
-                productImageRepository.delete(productImage);
+            //Отримуємо імена файлів усіх, що нам прийли
+            List<String> oldImagesName = new ArrayList<String>();
+            for (var item : product.getImageFiles()) {
+                if(item.getContentType().equals("old-image")) {
+                    oldImagesName.add(item.getOriginalFilename());
+                }
             }
+
+
+            var oldProductImageEntities = entity.getImages();
+            //список фото, які потрібно видалити
+            var listDelete = oldProductImageEntities.stream()
+                    .filter(img -> !oldImagesName.contains(img.getName())) // Видаляємо, якщо name немає у newNames
+                    .toList();
+
+
+//            var listDelete = oldProductImageEntities.stream()
+//                    .filter(img -> !product.getImageFiles().
+//                            .contains(img.getName()))
+//                    .toList();
+
+//            for (var productImage : oldProductImageEntities) {
+//                fileService.remove(productImage.getName());
+//                productImageRepository.delete(productImage);
+//            }
 
             //save new images
-            var priority = 1;
-            for (var file : newImageFiles) {
-                if (file == null || file.isEmpty()) continue;
-                var imageName = fileService.load(file);
-                var img = new ProductImageEntity();
-                img.setPriority(priority++);
-                img.setName(imageName);
-                img.setProduct(entity);
-                productImageRepository.save(img);
-            }
-        }
+//            var priority = 1;
+//            for (var file : newImageFiles) {
+//                if (file == null || file.isEmpty()) continue;
+//                var imageName = fileService.load(file);
+//                var img = new ProductImageEntity();
+//                img.setPriority(priority++);
+//                img.setName(imageName);
+//                img.setProduct(entity);
+//                productImageRepository.save(img);
+//            }
+
         return true;
     }
 
