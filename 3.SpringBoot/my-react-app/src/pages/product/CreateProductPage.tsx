@@ -3,16 +3,17 @@ import {useCreateProductMutation} from "../../services/productsApi.ts";
 import {useNavigate} from 'react-router-dom';
 import {IProductCreate} from "../../types/Product.ts";
 import {useGetAllCategoriesQuery} from "../../services/categoriesApi.ts";
-import {Form, Input, Select} from "antd";
+import {Form, Input, Select, Upload, UploadFile} from "antd";
 import TextArea from "antd/es/input/TextArea";
-import {CloseCircleOutlined} from '@ant-design/icons';
+import {PlusOutlined} from '@ant-design/icons';
+import {DragDropContext, Draggable, Droppable, DropResult} from "@hello-pangea/dnd";
 
 const CreateProductPage: React.FC = () => {
 
     const {data: categories, isLoading: categoriesLoading, error: categoriesError} = useGetAllCategoriesQuery();
     const [createProduct, {isLoading, error}] = useCreateProductMutation();
 
-    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const [selectedFiles, setSelectedFiles] = useState<UploadFile[]>([]);
 
     const navigate = useNavigate();
 
@@ -24,27 +25,47 @@ const CreateProductPage: React.FC = () => {
     }));
 
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-            const filesArray = Array.from(event.target.files);
-            setSelectedFiles(prev => [...prev, ...filesArray]);
-        }
-    };
-
-    const handleRemoveFile = (index: number) => {
-        setSelectedFiles(prev => prev.filter((_, i) => i !== index));
-    };
+    // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     if (event.target.files) {
+    //         const filesArray = Array.from(event.target.files);
+    //         setSelectedFiles(prev => [...prev, ...filesArray]);
+    //     }
+    // };
+    //
+    // const handleRemoveFile = (index: number) => {
+    //     setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    // };
 
     const onSubmit = async (values: IProductCreate) => {
-        try {
-            values.imageFiles = selectedFiles;
-            // Викликаємо мутацію для створення продукту
-            await createProduct(values).unwrap();
-            navigate('..'); // Перехід до нового продукту
-        } catch (err) {
-            console.error('Error creating product:', err);
-        }
+        // try {
+        //     values.imageFiles = selectedFiles;
+        //     // Викликаємо мутацію для створення продукту
+        //     await createProduct(values).unwrap();
+        //     navigate('..'); // Перехід до нового продукту
+        // } catch (err) {
+        //     console.error('Error creating product:', err);
+        // }
     }
+
+    const onDragEnd = (result: DropResult) => {
+        if (!result.destination) return;
+        const reorderedFiles = Array.from(selectedFiles);
+        const [movedFile] = reorderedFiles.splice(result.source.index, 1);
+        reorderedFiles.splice(result.destination.index, 0, movedFile);
+
+        setSelectedFiles(reorderedFiles);
+    };
+
+
+    const handleImageChange = (info: { fileList: UploadFile[] }) => {
+        const newFileList = info.fileList.map((file, index) => ({
+            ...file,
+            uid: file.uid || Date.now().toString(),
+            order: index,
+        }));
+
+        setSelectedFiles(newFileList);
+    };
 
 
     return (
@@ -142,38 +163,54 @@ const CreateProductPage: React.FC = () => {
                     />
                 </Form.Item>
 
-                {/* Поле для завантаження файлів */}
-                <Form.Item label="Фото продукту" name="imageFiles">
-                    <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="w-full p-2 border border-gray-300 rounded mt-2"
-                    />
-                </Form.Item>
 
-
-                {/* Відображення вибраних зображень */}
-                {selectedFiles.length > 0 && (
-                    <div className="grid grid-cols-3 gap-4 mt-4">
-                        {selectedFiles.map((file, index) => (
-                            <div key={index} className="relative">
-                                <img
-                                    src={URL.createObjectURL(file)}
-                                    alt="preview"
-                                    style={{maxWidth: "150px", maxHeight: "150px"}}
-                                />
-                                <button
-                                    onClick={() => handleRemoveFile(index)}
-                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                                >
-                                    <CloseCircleOutlined/>
-                                </button>
+                <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="upload-list" direction="horizontal">
+                        {(provided) => (
+                            <div ref={provided.innerRef} {...provided.droppableProps} className="flex flex-wrap gap-2">
+                                {selectedFiles.map((file, index) => (
+                                    <Draggable key={file.uid} draggableId={file.uid} index={index}>
+                                        {(provided) => (
+                                            <div
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                            >
+                                                <Upload
+                                                    listType="picture-card"
+                                                    fileList={[file]}
+                                                    onRemove={() => {
+                                                        const newFileList = selectedFiles.filter(f => f.uid !== file.uid);
+                                                        setSelectedFiles(newFileList);
+                                                        // setProduct({
+                                                        //     ...product,
+                                                        //     images: newFileList.map(f => f.originFileObj as File),
+                                                        // });
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
                             </div>
-                        ))}
+                        )}
+                    </Droppable>
+                </DragDropContext>
+
+                <Upload
+                    multiple
+                    listType="picture-card"
+                    beforeUpload={() => false}
+                    onChange={handleImageChange}
+                    fileList={[]}
+                    accept="image/*"
+                >
+                    <div>
+                        <PlusOutlined/>
+                        <div style={{marginTop: 8}}>Додати</div>
                     </div>
-                )}
+                </Upload>
 
                 <div className="flex justify-center">
                     <button
