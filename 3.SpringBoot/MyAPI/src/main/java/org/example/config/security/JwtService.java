@@ -77,7 +77,7 @@ public class JwtService {
     public boolean validate(String token) {
         try {
             SecretKey key = getSecretKey();
-            Jwts.parser().decryptWith(key).build().parse(token);
+            Jwts.parser().verifyWith(key).build().parse(token);
             return true;
         } catch (SignatureException ex) {
             System.out.println("Invalid JWT signature - "+ ex.getMessage());
